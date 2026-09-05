@@ -18,15 +18,19 @@ const initiatePaymentInDB = async (userId: string, payload: any) => {
     },
   });
 
-  /* bKash & SSLCommerz Payment Integration (Commented out for now - using Stripe)
+  let paymentUrl = '';
+
+  /* bKash Payment Integration (Commented out for now - using Stripe & SSLCommerz)
   if (gateway === 'BKASH') {
     paymentUrl = `https://sandbox.bkash.com/checkout?trxID=${transactionId}&amount=${amount}`;
-  } else if (gateway === 'SSLCOMMERZ') {
-    paymentUrl = `https://sandbox.sslcommerz.com/gwprocess/v4/api.php?Q=${transactionId}`;
-  }
+  } else
   */
 
-  const paymentUrl = `https://checkout.stripe.com/pay/${transactionId}`;
+  if (gateway === 'STRIPE') {
+    paymentUrl = `https://checkout.stripe.com/pay/${transactionId}`;
+  } else {
+    paymentUrl = `https://sandbox.sslcommerz.com/gwprocess/v4/api.php?Q=${transactionId}`;
+  }
 
   return {
     payment,
