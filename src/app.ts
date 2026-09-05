@@ -43,10 +43,11 @@ app.use(cookieParser());
 app.get('/', (req: Request, res: Response) => {
   res.json({
     success: true,
-    message: 'Welcome to MoveInBD Backend REST API Server 🏠🚚',
+    message: 'Welcome to MoveInBD API 🏠',
     documentation: '/api-docs',
   });
 });
+
 
 // Swagger API Documentation (matching B7A4)
 const swaggerOptions = {

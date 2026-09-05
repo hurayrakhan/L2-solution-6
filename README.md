@@ -1,4 +1,4 @@
-# 🏠🚚 MoveInBD Backend — Housing, Logistics & Utility Splitting Platform
+# 🏠🚚 MoveInBD — Housing, Logistics & Transport Platform
 
 [![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue.svg)](https://www.typescriptlang.org/)
@@ -7,9 +7,11 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-NeonDB-blue.svg)](https://neon.tech/)
 [![License](https://img.shields.io/badge/License-ISC-brightgreen.svg)]()
 
-**MoveInBD** is a production-grade, multi-role RESTful API server built for urban housing rentals, mess utility bill splitting, house-shifting logistics, and passenger travel transportation in Bangladesh.
+> **MoveInBD** is a unified API platform for property rentals, house-shifting logistics, transport bookings, and mess utility bill management.
 
 ---
+
+
 
 ## 📌 Features & Architecture Highlights
 

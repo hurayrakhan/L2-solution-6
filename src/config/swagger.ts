@@ -3,8 +3,10 @@ export const swaggerSpec = {
   info: {
     title: "MoveInBD REST API 🏠🚚",
     version: "1.0.0",
-    description: "Backend RESTful API for MoveInBD — All-in-one Housing Rental, Mess Utility Splitting, House-Shifting Logistics & Passenger Transportation Platform for Bangladesh. Supports Tenants, Providers (Landlords & Transport Owners), and Admins.",
+    description: "MoveInBD — Housing, Logistics & Transport Platform REST API. Powers property rentals, house-shifting logistics, transport fleet bookings, and mess utility bill management.",
   },
+
+
   servers: [
     {
       url: "/",
