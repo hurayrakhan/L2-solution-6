@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger.js';
 import { globalErrorHandler } from './middlewares/error.middleware.js';
 import notFound from './middlewares/notFound.js';
 import routes from './routes/index.js';
@@ -10,7 +12,7 @@ import routes from './routes/index.js';
 const app: Application = express();
 
 // Security Middlewares
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
     origin: '*',
@@ -42,8 +44,20 @@ app.get('/', (req: Request, res: Response) => {
   res.json({
     success: true,
     message: 'Welcome to MoveInBD Backend REST API Server 🏠🚚',
+    documentation: '/api-docs',
   });
 });
+
+// Swagger API Documentation (matching B7A4)
+const swaggerOptions = {
+  customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui.min.css',
+  customJs: [
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-bundle.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.18.3/swagger-ui-standalone-preset.js',
+  ],
+};
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerOptions));
 
 // Central Application Versioned Routes
 app.use('/api/v1', routes);
