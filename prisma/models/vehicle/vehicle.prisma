@@ -1,0 +1,22 @@
+model Vehicle {
+  id           String             @id @default(uuid())
+  ownerId      String
+  owner        User               @relation("OwnerVehicles", fields: [ownerId], references: [id], onDelete: Cascade)
+  title        String
+  vehicleType  VehicleType
+  licensePlate String             @unique
+  capacity     String
+  driverName   String
+  driverPhone  String
+  hourlyRate   Float
+  perKmRate    Float
+  isAvailable  Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  deletedAt    DateTime?
+
+  bookings     TransportBooking[]
+
+  @@index([vehicleType])
+  @@index([isAvailable])
+}

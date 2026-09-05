@@ -1,0 +1,24 @@
+model User {
+  id               String             @id @default(uuid())
+  name             String
+  email            String             @unique
+  password         String
+  phone            String?
+  role             Role               @default(TENANT_USER)
+  isVerified       Boolean            @default(false)
+  avatar           String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  deletedAt        DateTime?
+
+  properties       Property[]         @relation("LandlordProperties")
+  utilityBills     UtilityBill[]      @relation("LandlordUtilityBills")
+  utilityPayments  UtilityPayment[]   @relation("TenantUtilityPayments")
+  vehicles         Vehicle[]          @relation("OwnerVehicles")
+  bookings         TransportBooking[] @relation("TenantBookings")
+  payments         Payment[]          @relation("UserPayments")
+  auditLogs        AuditLog[]         @relation("UserAuditLogs")
+
+  @@index([email])
+  @@index([role])
+}

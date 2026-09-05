@@ -1,0 +1,17 @@
+model Payment {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation("UserPayments", fields: [userId], references: [id], onDelete: Cascade)
+  amount        Float
+  paymentType   PaymentType
+  referenceId   String
+  gateway       PaymentGateway @default(BKASH)
+  transactionId String         @unique
+  status        PaymentStatus  @default(INITIATED)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([transactionId])
+  @@index([status])
+}

@@ -1,0 +1,40 @@
+model UtilityBill {
+  id              String           @id @default(uuid())
+  propertyId      String
+  property        Property         @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  landlordId      String
+  landlord        User             @relation("LandlordUtilityBills", fields: [landlordId], references: [id], onDelete: Cascade)
+  month           String
+  year            Int
+  electricityBill Float            @default(0)
+  gasBill         Float            @default(0)
+  waterBill       Float            @default(0)
+  maidSalary      Float            @default(0)
+  totalAmount     Float
+  perTenantShare  Float
+  status          UtilityStatus    @default(UNPAID)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  utilityPayments UtilityPayment[]
+
+  @@index([propertyId])
+  @@index([month, year])
+}
+
+model UtilityPayment {
+  id            String        @id @default(uuid())
+  utilityBillId String
+  utilityBill   UtilityBill   @relation(fields: [utilityBillId], references: [id], onDelete: Cascade)
+  tenantId      String
+  tenant        User          @relation("TenantUtilityPayments", fields: [tenantId], references: [id], onDelete: Cascade)
+  amount        Float
+  paymentStatus PaymentStatus @default(INITIATED)
+  transactionId String?
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([tenantId])
+  @@index([utilityBillId])
+}

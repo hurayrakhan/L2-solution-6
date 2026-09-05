@@ -1,0 +1,21 @@
+model TransportBooking {
+  id             String        @id @default(uuid())
+  tenantId       String
+  tenant         User          @relation("TenantBookings", fields: [tenantId], references: [id], onDelete: Cascade)
+  vehicleId      String
+  vehicle        Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  bookingType    BookingType   @default(HOUSE_SHIFTING)
+  pickupAddress  String
+  dropoffAddress String
+  shiftingDate   DateTime
+  laborCount     Int           @default(0)
+  totalAmount    Float
+  escrowStatus   EscrowStatus  @default(HELD)
+  status         BookingStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([tenantId])
+  @@index([vehicleId])
+  @@index([status])
+}

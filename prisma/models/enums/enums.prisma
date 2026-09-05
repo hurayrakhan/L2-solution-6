@@ -1,0 +1,62 @@
+enum Role {
+  TENANT_USER
+  PROVIDER
+  ADMIN
+}
+
+enum PropertyType {
+  FLAT
+  SUBLET
+  MESS
+}
+
+enum VehicleType {
+  PICKUP_TRUCK
+  COVERED_VAN
+  PASSENGER_CAR
+  MICROBUS
+}
+
+enum BookingType {
+  HOUSE_SHIFTING
+  PASSENGER_TRAVEL
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
+}
+
+enum EscrowStatus {
+  HELD
+  RELEASED
+  REFUNDED
+}
+
+enum UtilityStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+}
+
+enum PaymentType {
+  RENT
+  UTILITY
+  TRANSPORT_BOOKING
+}
+
+enum PaymentGateway {
+  BKASH
+  STRIPE
+  SSLCOMMERZ
+}
+
+enum PaymentStatus {
+  INITIATED
+  SUCCESS
+  FAILED
+  CANCELLED
+}
