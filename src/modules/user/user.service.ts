@@ -1,0 +1,50 @@
+import { AppError } from '../../utils/app-error.js';
+import { prisma } from '../../utils/prisma.js';
+
+const getMyProfileFromDB = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      role: true,
+      isVerified: true,
+      avatar: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new AppError('User profile not found', 404);
+  }
+
+  return user;
+};
+
+const updateMyProfileInDB = async (userId: string, payload: { name?: string; phone?: string; avatar?: string }) => {
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: payload,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      role: true,
+      isVerified: true,
+      avatar: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return updatedUser;
+};
+
+export const UserService = {
+  getMyProfileFromDB,
+  updateMyProfileInDB,
+};
