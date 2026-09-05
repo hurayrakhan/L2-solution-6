@@ -48,10 +48,10 @@ app.get('/', (req: Request, res: Response) => {
 // Central Application Versioned Routes
 app.use('/api/v1', routes);
 
-// Global Error Handler Middleware
-app.use(globalErrorHandler);
-
 // 404 Not Found Middleware
 app.use(notFound);
+
+// Global Error Handler Middleware
+app.use(globalErrorHandler);
 
 export default app;
