@@ -28,7 +28,7 @@ const getMyBookings = catchAsync(async (req: CustomRequest, res: Response) => {
 });
 
 const getBookingById = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const result = await BookingService.getBookingByIdFromDB(id);
   sendResponse(res, {
     statusCode: 200,
@@ -39,7 +39,7 @@ const getBookingById = catchAsync(async (req: CustomRequest, res: Response) => {
 });
 
 const updateBookingStatus = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const userId = req.user!.id;
   const role = req.user!.role;
   const { status } = req.body;

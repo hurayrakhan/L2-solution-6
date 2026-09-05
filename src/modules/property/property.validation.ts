@@ -3,13 +3,13 @@ import { z } from 'zod';
 export const PropertyValidation = {
   createPropertySchema: z.object({
     body: z.object({
-      title: z.string({ required_error: 'Title is required' }),
-      description: z.string({ required_error: 'Description is required' }),
-      address: z.string({ required_error: 'Address is required' }),
-      city: z.string({ required_error: 'City is required' }),
-      area: z.string({ required_error: 'Area is required' }),
+      title: z.string().min(1, 'Title is required'),
+      description: z.string().min(1, 'Description is required'),
+      address: z.string().min(1, 'Address is required'),
+      city: z.string().min(1, 'City is required'),
+      area: z.string().min(1, 'Area is required'),
       propertyType: z.enum(['FLAT', 'SUBLET', 'MESS']).default('FLAT'),
-      rentAmount: z.number({ required_error: 'Rent amount is required' }).positive(),
+      rentAmount: z.number({ invalid_type_error: 'Rent amount must be a number' }).positive(),
       bedrooms: z.number().int().min(1).default(1),
       bathrooms: z.number().int().min(1).default(1),
     }),

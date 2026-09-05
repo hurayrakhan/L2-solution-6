@@ -27,7 +27,7 @@ const getAllVehicles = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getVehicleById = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const result = await VehicleService.getVehicleByIdFromDB(id);
   sendResponse(res, {
     statusCode: 200,
@@ -38,7 +38,7 @@ const getVehicleById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateVehicle = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const ownerId = req.user!.id;
   const role = req.user!.role;
   const result = await VehicleService.updateVehicleInDB(id, ownerId, role, req.body);
@@ -51,7 +51,7 @@ const updateVehicle = catchAsync(async (req: CustomRequest, res: Response) => {
 });
 
 const deleteVehicle = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const ownerId = req.user!.id;
   const role = req.user!.role;
   await VehicleService.deleteVehicleFromDB(id, ownerId, role);

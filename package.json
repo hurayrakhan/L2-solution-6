@@ -6,19 +6,25 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "prisma generate && tsc",
+    "build": "tsc",
     "start": "node dist/server.js",
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:seed": "tsx prisma/seed.ts"
   },
-  "keywords": ["express", "typescript", "prisma", "postgresql", "moveinbd"],
+  "keywords": [
+    "express",
+    "typescript",
+    "prisma",
+    "postgresql",
+    "moveinbd"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/client": "^7.10.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -38,7 +44,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.9",
     "@types/pg": "^8.11.6",
-    "prisma": "^7.8.0",
+    "prisma": "^7.10.0",
     "rimraf": "^5.0.7",
     "tsx": "^4.15.7",
     "typescript": "^5.5.2"

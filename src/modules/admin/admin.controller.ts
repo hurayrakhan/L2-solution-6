@@ -25,7 +25,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 });
 
 const verifyProvider = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const result = await AdminService.verifyProviderInDB(id);
   sendResponse(res, {
     statusCode: 200,

@@ -27,7 +27,7 @@ const getAllProperties = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getPropertyById = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const result = await PropertyService.getPropertyByIdFromDB(id);
   sendResponse(res, {
     statusCode: 200,
@@ -38,7 +38,7 @@ const getPropertyById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateProperty = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const userId = req.user!.id;
   const userRole = req.user!.role;
   const result = await PropertyService.updatePropertyInDB(id, userId, userRole, req.body);
@@ -51,7 +51,7 @@ const updateProperty = catchAsync(async (req: CustomRequest, res: Response) => {
 });
 
 const deleteProperty = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const userId = req.user!.id;
   const userRole = req.user!.role;
   await PropertyService.deletePropertyFromDB(id, userId, userRole);

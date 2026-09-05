@@ -28,7 +28,7 @@ const getMyUtilityBills = catchAsync(async (req: CustomRequest, res: Response) =
 });
 
 const getUtilityBillById = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const result = await UtilityService.getUtilityBillByIdFromDB(id);
   sendResponse(res, {
     statusCode: 200,

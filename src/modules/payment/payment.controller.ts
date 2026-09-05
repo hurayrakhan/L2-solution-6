@@ -26,7 +26,7 @@ const verifyPaymentWebhook = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getPaymentById = catchAsync(async (req: CustomRequest, res: Response) => {
-  const { id } = req.params;
+  const id = req.params.id as string;
   const userId = req.user!.id;
   const role = req.user!.role;
   const result = await PaymentService.getPaymentByIdFromDB(id, userId, role);

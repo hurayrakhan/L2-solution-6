@@ -3,12 +3,12 @@ import { z } from 'zod';
 export const VehicleValidation = {
   createVehicleSchema: z.object({
     body: z.object({
-      title: z.string({ required_error: 'Vehicle title is required' }),
+      title: z.string().min(1, 'Vehicle title is required'),
       vehicleType: z.enum(['PICKUP_TRUCK', 'COVERED_VAN', 'PASSENGER_CAR', 'MICROBUS']),
-      licensePlate: z.string({ required_error: 'License plate is required' }),
-      capacity: z.string({ required_error: 'Capacity description is required' }),
-      driverName: z.string({ required_error: 'Driver name is required' }),
-      driverPhone: z.string({ required_error: 'Driver phone is required' }),
+      licensePlate: z.string().min(1, 'License plate is required'),
+      capacity: z.string().min(1, 'Capacity description is required'),
+      driverName: z.string().min(1, 'Driver name is required'),
+      driverPhone: z.string().min(1, 'Driver phone is required'),
       hourlyRate: z.number().positive(),
       perKmRate: z.number().positive(),
     }),
