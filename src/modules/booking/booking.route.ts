@@ -13,6 +13,7 @@ router.post(
   BookingController.createBooking
 );
 
+router.get('/', auth('ADMIN', 'PROVIDER'), BookingController.getAllBookings);
 router.get('/my-bookings', auth('TENANT_USER', 'PROVIDER', 'ADMIN'), BookingController.getMyBookings);
 router.get('/:id', auth('TENANT_USER', 'PROVIDER', 'ADMIN'), BookingController.getBookingById);
 
@@ -23,4 +24,7 @@ router.patch(
   BookingController.updateBookingStatus
 );
 
+router.delete('/:id', auth('TENANT_USER', 'PROVIDER', 'ADMIN'), BookingController.deleteBooking);
+
 export default router;
+

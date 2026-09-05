@@ -38,8 +38,33 @@ const getPaymentById = catchAsync(async (req: CustomRequest, res: Response) => {
   });
 });
 
+const getAllPayments = catchAsync(async (req: CustomRequest, res: Response) => {
+  const result = await PaymentService.getAllPaymentsFromDB();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'All payment records retrieved successfully',
+    data: result,
+  });
+});
+
+const refundPayment = catchAsync(async (req: CustomRequest, res: Response) => {
+  const id = req.params.id as string;
+  const adminId = req.user!.id;
+  const result = await PaymentService.refundPaymentInDB(id, adminId);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Payment transaction marked as refunded successfully',
+    data: result,
+  });
+});
+
 export const PaymentController = {
   initiatePayment,
   verifyPaymentWebhook,
+  getAllPayments,
   getPaymentById,
+  refundPayment,
 };
+

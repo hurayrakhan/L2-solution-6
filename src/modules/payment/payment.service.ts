@@ -102,8 +102,47 @@ const getPaymentByIdFromDB = async (id: string, userId: string, role: string) =>
   return payment;
 };
 
+const getAllPaymentsFromDB = async () => {
+  return prisma.payment.findMany({
+    include: {
+      user: { select: { id: true, name: true, email: true, phone: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+};
+
+const refundPaymentInDB = async (id: string, adminId: string) => {
+  const payment = await prisma.payment.findUnique({ where: { id } });
+  if (!payment) {
+    throw new AppError('Payment transaction not found', 404);
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const updatedPayment = await tx.payment.update({
+      where: { id },
+      data: { status: 'CANCELLED' },
+    });
+
+
+    await tx.auditLog.create({
+      data: {
+        userId: adminId,
+        action: 'REFUND_PAYMENT',
+        entity: 'Payment',
+        entityId: id,
+        details: `Refunded payment transaction ${payment.transactionId} of ${payment.amount} BDT`,
+      },
+    });
+
+    return updatedPayment;
+  });
+};
+
 export const PaymentService = {
   initiatePaymentInDB,
   verifyPaymentWebhookInDB,
+  getAllPaymentsFromDB,
   getPaymentByIdFromDB,
+  refundPaymentInDB,
 };
+

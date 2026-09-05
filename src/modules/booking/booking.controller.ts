@@ -52,9 +52,35 @@ const updateBookingStatus = catchAsync(async (req: CustomRequest, res: Response)
   });
 });
 
+const getAllBookings = catchAsync(async (req: CustomRequest, res: Response) => {
+  const result = await BookingService.getAllBookingsFromDB();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'All transport bookings retrieved successfully',
+    data: result,
+  });
+});
+
+const deleteBooking = catchAsync(async (req: CustomRequest, res: Response) => {
+  const id = req.params.id as string;
+  const userId = req.user!.id;
+  const role = req.user!.role;
+  const result = await BookingService.deleteBookingFromDB(id, userId, role);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Booking deleted/cancelled successfully',
+    data: result,
+  });
+});
+
 export const BookingController = {
   createBooking,
   getMyBookings,
+  getAllBookings,
   getBookingById,
   updateBookingStatus,
+  deleteBooking,
 };
+

@@ -38,8 +38,61 @@ const getUtilityBillById = catchAsync(async (req: CustomRequest, res: Response) 
   });
 });
 
+const getAllUtilityBills = catchAsync(async (req: CustomRequest, res: Response) => {
+  const result = await UtilityService.getAllUtilityBillsFromDB();
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'All utility bills retrieved successfully',
+    data: result,
+  });
+});
+
+const updateUtilityBill = catchAsync(async (req: CustomRequest, res: Response) => {
+  const id = req.params.id as string;
+  const landlordId = req.user!.id;
+  const role = req.user!.role;
+  const result = await UtilityService.updateUtilityBillInDB(id, landlordId, role, req.body);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Utility bill updated successfully',
+    data: result,
+  });
+});
+
+const payUtilityShare = catchAsync(async (req: CustomRequest, res: Response) => {
+  const billId = req.params.id as string;
+  const tenantId = req.user!.id;
+  const result = await UtilityService.payUtilityShareInDB(billId, tenantId);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Tenant utility share marked as paid successfully',
+    data: result,
+  });
+});
+
+const deleteUtilityBill = catchAsync(async (req: CustomRequest, res: Response) => {
+  const id = req.params.id as string;
+  const landlordId = req.user!.id;
+  const role = req.user!.role;
+  const result = await UtilityService.deleteUtilityBillFromDB(id, landlordId, role);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Utility bill deleted successfully',
+    data: result,
+  });
+});
+
 export const UtilityController = {
   createUtilityBill,
+  getAllUtilityBills,
   getMyUtilityBills,
   getUtilityBillById,
+  updateUtilityBill,
+  payUtilityShare,
+  deleteUtilityBill,
 };
+

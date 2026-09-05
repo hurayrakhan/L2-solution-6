@@ -151,9 +151,58 @@ const updateBookingStatusInDB = async (id: string, userId: string, role: string,
   });
 };
 
+const getAllBookingsFromDB = async () => {
+  return prisma.transportBooking.findMany({
+    include: {
+      vehicle: {
+        include: {
+          owner: { select: { id: true, name: true, email: true, phone: true } },
+        },
+      },
+      tenant: { select: { id: true, name: true, email: true, phone: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+};
+
+const deleteBookingFromDB = async (id: string, userId: string, role: string) => {
+  const booking = await prisma.transportBooking.findUnique({
+    where: { id },
+  });
+
+  if (!booking) {
+    throw new AppError('Booking not found', 404);
+  }
+
+  if (role !== 'ADMIN' && booking.tenantId !== userId) {
+    throw new AppError('You are not authorized to delete/cancel this booking', 403);
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const deletedBooking = await tx.transportBooking.delete({
+      where: { id },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId,
+        action: 'DELETE_BOOKING',
+        entity: 'TransportBooking',
+        entityId: id,
+        details: `Deleted booking ${id}`,
+      },
+    });
+
+    return deletedBooking;
+  });
+};
+
 export const BookingService = {
   createBookingInDB,
   getMyBookingsFromDB,
+  getAllBookingsFromDB,
   getBookingByIdFromDB,
   updateBookingStatusInDB,
+  deleteBookingFromDB,
 };
+

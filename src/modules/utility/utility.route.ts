@@ -13,7 +13,12 @@ router.post(
   UtilityController.createUtilityBill
 );
 
+router.get('/', auth('ADMIN', 'PROVIDER'), UtilityController.getAllUtilityBills);
 router.get('/my-bills', auth('TENANT_USER', 'PROVIDER', 'ADMIN'), UtilityController.getMyUtilityBills);
 router.get('/:id', auth('TENANT_USER', 'PROVIDER', 'ADMIN'), UtilityController.getUtilityBillById);
+router.patch('/:id', auth('PROVIDER', 'ADMIN'), UtilityController.updateUtilityBill);
+router.patch('/:id/pay', auth('TENANT_USER'), UtilityController.payUtilityShare);
+router.delete('/:id', auth('PROVIDER', 'ADMIN'), UtilityController.deleteUtilityBill);
 
 export default router;
+

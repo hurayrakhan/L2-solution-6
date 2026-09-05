@@ -26,7 +26,45 @@ const updateMyProfile = catchAsync(async (req: CustomRequest, res: Response) => 
   });
 });
 
+const getUserById = catchAsync(async (req: CustomRequest, res: Response) => {
+  const id = req.params.id as string;
+  const result = await UserService.getUserByIdFromDB(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User details retrieved successfully',
+    data: result,
+  });
+});
+
+const updateUserRole = catchAsync(async (req: CustomRequest, res: Response) => {
+  const id = req.params.id as string;
+  const { role } = req.body;
+  const result = await UserService.updateUserRoleInDB(id, role);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User role updated successfully',
+    data: result,
+  });
+});
+
+const deleteUser = catchAsync(async (req: CustomRequest, res: Response) => {
+  const id = req.params.id as string;
+  const result = await UserService.deleteUserFromDB(id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User account deleted successfully',
+    data: result,
+  });
+});
+
 export const UserController = {
   getMyProfile,
   updateMyProfile,
+  getUserById,
+  updateUserRole,
+  deleteUser,
 };
+

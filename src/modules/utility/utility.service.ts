@@ -84,8 +84,73 @@ const getUtilityBillByIdFromDB = async (id: string) => {
   return bill;
 };
 
+const getAllUtilityBillsFromDB = async () => {
+  return prisma.utilityBill.findMany({
+    include: {
+      property: { select: { id: true, title: true, address: true } },
+      utilityPayments: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+};
+
+const updateUtilityBillInDB = async (id: string, landlordId: string, role: string, payload: any) => {
+  const bill = await prisma.utilityBill.findUnique({ where: { id } });
+  if (!bill) {
+    throw new AppError('Utility bill not found', 404);
+  }
+  if (role !== 'ADMIN' && bill.landlordId !== landlordId) {
+    throw new AppError('You are not authorized to update this bill', 403);
+  }
+
+  const updatedBill = await prisma.utilityBill.update({
+    where: { id },
+    data: payload,
+    include: { property: { select: { id: true, title: true, address: true } } },
+  });
+
+  return updatedBill;
+};
+
+const payUtilityShareInDB = async (billId: string, tenantId: string) => {
+  const bill = await prisma.utilityBill.findUnique({ where: { id: billId } });
+  if (!bill) {
+    throw new AppError('Utility bill not found', 404);
+  }
+
+  const payment = await prisma.utilityPayment.create({
+    data: {
+      utilityBillId: billId,
+      tenantId,
+      amount: bill.perTenantShare,
+      paymentStatus: 'SUCCESS',
+      paidAt: new Date(),
+    },
+  });
+
+  return payment;
+};
+
+
+const deleteUtilityBillFromDB = async (id: string, landlordId: string, role: string) => {
+  const bill = await prisma.utilityBill.findUnique({ where: { id } });
+  if (!bill) {
+    throw new AppError('Utility bill not found', 404);
+  }
+  if (role !== 'ADMIN' && bill.landlordId !== landlordId) {
+    throw new AppError('You are not authorized to delete this bill', 403);
+  }
+
+  return await prisma.utilityBill.delete({ where: { id } });
+};
+
 export const UtilityService = {
   createUtilityBillInDB,
+  getAllUtilityBillsFromDB,
   getMyUtilityBillsFromDB,
   getUtilityBillByIdFromDB,
+  updateUtilityBillInDB,
+  payUtilityShareInDB,
+  deleteUtilityBillFromDB,
 };
+

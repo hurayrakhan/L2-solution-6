@@ -15,6 +15,9 @@ router.post(
 
 router.post('/webhook', validateRequest(PaymentValidation.verifyWebhookSchema), PaymentController.verifyPaymentWebhook);
 
+router.get('/', auth('ADMIN'), PaymentController.getAllPayments);
 router.get('/:id', auth('TENANT_USER', 'PROVIDER', 'ADMIN'), PaymentController.getPaymentById);
+router.patch('/:id/refund', auth('ADMIN'), PaymentController.refundPayment);
 
 export default router;
+
