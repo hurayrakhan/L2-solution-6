@@ -15,7 +15,8 @@
   },
   "keywords": ["express", "typescript", "prisma", "postgresql", "moveinbd"],
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
+
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",

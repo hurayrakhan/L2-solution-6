@@ -5,8 +5,6 @@ export const swaggerSpec = {
     version: "1.0.0",
     description: "MoveInBD — Housing, Logistics & Transport Platform REST API. Powers property rentals, house-shifting logistics, transport fleet bookings, and mess utility bill management.",
   },
-
-
   servers: [
     {
       url: "/",
@@ -143,11 +141,7 @@ export const swaggerSpec = {
             }
           }
         },
-        responses: {
-          "201": {
-            description: "User registered successfully"
-          }
-        }
+        responses: { "201": { description: "User registered successfully" } }
       }
     },
     "/api/v1/auth/login": {
@@ -169,11 +163,28 @@ export const swaggerSpec = {
             }
           }
         },
-        responses: {
-          "200": {
-            description: "User logged in successfully"
+        responses: { "200": { description: "User logged in successfully" } }
+      }
+    },
+    "/api/v1/auth/refresh-token": {
+      post: {
+        tags: ["Authentication"],
+        summary: "Refresh user access token",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["refreshToken"],
+                properties: {
+                  refreshToken: { type: "string" }
+                }
+              }
+            }
           }
-        }
+        },
+        responses: { "200": { description: "New access token generated" } }
       }
     },
     "/api/v1/users/me": {
@@ -181,17 +192,52 @@ export const swaggerSpec = {
         tags: ["Users & Profile"],
         summary: "Get current authenticated user profile",
         security: [{ bearerAuth: [] }],
-        responses: {
-          "200": { description: "Profile retrieved successfully" }
-        }
+        responses: { "200": { description: "Profile retrieved successfully" } }
       },
       patch: {
         tags: ["Users & Profile"],
         summary: "Update current user profile",
         security: [{ bearerAuth: [] }],
-        responses: {
-          "200": { description: "Profile updated successfully" }
-        }
+        responses: { "200": { description: "Profile updated successfully" } }
+      }
+    },
+    "/api/v1/users/{id}": {
+      get: {
+        tags: ["Users & Profile"],
+        summary: "Get user details by ID (Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "User retrieved successfully" } }
+      },
+      delete: {
+        tags: ["Users & Profile"],
+        summary: "Delete user account (Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "User deleted successfully" } }
+      }
+    },
+    "/api/v1/users/{id}/role": {
+      patch: {
+        tags: ["Users & Profile"],
+        summary: "Update user role (Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["role"],
+                properties: {
+                  role: { type: "string", enum: ["TENANT_USER", "PROVIDER", "ADMIN"] }
+                }
+              }
+            }
+          }
+        },
+        responses: { "200": { description: "User role updated successfully" } }
       }
     },
     "/api/v1/properties": {
@@ -205,40 +251,54 @@ export const swaggerSpec = {
           { name: "page", in: "query", schema: { type: "integer", default: 1 } },
           { name: "limit", in: "query", schema: { type: "integer", default: 10 } }
         ],
-        responses: {
-          "200": { description: "Properties retrieved successfully" }
-        }
+        responses: { "200": { description: "Properties retrieved successfully" } }
       },
       post: {
         tags: ["Properties (Housing & Mess)"],
         summary: "Create property listing (Provider/Admin)",
         security: [{ bearerAuth: [] }],
-        requestBody: {
-          required: true,
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                required: ["title", "description", "address", "city", "area", "rentAmount"],
-                properties: {
-                  title: { type: "string", example: "Modern 3 BHK Flat in Mirpur DOHS" },
-                  description: { type: "string", example: "Spacious flat with elevator & backup generator" },
-                  address: { type: "string", example: "Road 8, Mirpur DOHS" },
-                  city: { type: "string", example: "Dhaka" },
-                  area: { type: "string", example: "Mirpur" },
-                  propertyType: { type: "string", enum: ["FLAT", "SUBLET", "MESS"], example: "FLAT" },
-                  rentAmount: { type: "number", example: 32000 }
-                }
-              }
-            }
-          }
-        },
-        responses: {
-          "201": { description: "Property created successfully" }
-        }
+        responses: { "201": { description: "Property created successfully" } }
+      }
+    },
+    "/api/v1/properties/search": {
+      get: {
+        tags: ["Properties (Housing & Mess)"],
+        summary: "Search properties by query string",
+        parameters: [
+          { name: "q", in: "query", required: true, schema: { type: "string" }, description: "Search keyword" }
+        ],
+        responses: { "200": { description: "Properties search results retrieved" } }
+      }
+    },
+    "/api/v1/properties/{id}": {
+      get: {
+        tags: ["Properties (Housing & Mess)"],
+        summary: "Get property details by ID",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Property details retrieved" } }
+      },
+      patch: {
+        tags: ["Properties (Housing & Mess)"],
+        summary: "Update property details (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Property updated successfully" } }
+      },
+      delete: {
+        tags: ["Properties (Housing & Mess)"],
+        summary: "Soft delete property (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Property deleted successfully" } }
       }
     },
     "/api/v1/utilities": {
+      get: {
+        tags: ["Utilities & Bill Splitting"],
+        summary: "List all utility bills (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        responses: { "200": { description: "All utility bills retrieved" } }
+      },
       post: {
         tags: ["Utilities & Bill Splitting"],
         summary: "Create monthly utility bill & tenant split (Provider/Admin)",
@@ -252,6 +312,38 @@ export const swaggerSpec = {
         summary: "Get user utility bill invoices",
         security: [{ bearerAuth: [] }],
         responses: { "200": { description: "Utility bills retrieved successfully" } }
+      }
+    },
+    "/api/v1/utilities/{id}": {
+      get: {
+        tags: ["Utilities & Bill Splitting"],
+        summary: "Get utility bill details by ID",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Utility bill details retrieved" } }
+      },
+      patch: {
+        tags: ["Utilities & Bill Splitting"],
+        summary: "Update utility bill details (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Utility bill updated" } }
+      },
+      delete: {
+        tags: ["Utilities & Bill Splitting"],
+        summary: "Delete utility bill (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Utility bill deleted" } }
+      }
+    },
+    "/api/v1/utilities/{id}/pay": {
+      patch: {
+        tags: ["Utilities & Bill Splitting"],
+        summary: "Mark tenant utility share as paid (Tenant)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Tenant utility share marked paid" } }
       }
     },
     "/api/v1/vehicles": {
@@ -270,12 +362,95 @@ export const swaggerSpec = {
         responses: { "201": { description: "Vehicle added successfully" } }
       }
     },
+    "/api/v1/vehicles/{id}": {
+      get: {
+        tags: ["Vehicles & Transport"],
+        summary: "Get vehicle details by ID",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Vehicle details retrieved" } }
+      },
+      patch: {
+        tags: ["Vehicles & Transport"],
+        summary: "Update vehicle details (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Vehicle updated" } }
+      },
+      delete: {
+        tags: ["Vehicles & Transport"],
+        summary: "Soft delete vehicle (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Vehicle deleted" } }
+      }
+    },
     "/api/v1/bookings": {
+      get: {
+        tags: ["Bookings & Shifting"],
+        summary: "List all system bookings (Provider/Admin)",
+        security: [{ bearerAuth: [] }],
+        responses: { "200": { description: "All bookings retrieved" } }
+      },
       post: {
         tags: ["Bookings & Shifting"],
         summary: "Create house-shifting or travel booking with escrow hold",
         security: [{ bearerAuth: [] }],
         responses: { "201": { description: "Booking created successfully" } }
+      }
+    },
+    "/api/v1/bookings/my-bookings": {
+      get: {
+        tags: ["Bookings & Shifting"],
+        summary: "View logged-in user booking history",
+        security: [{ bearerAuth: [] }],
+        responses: { "200": { description: "User bookings retrieved" } }
+      }
+    },
+    "/api/v1/bookings/{id}": {
+      get: {
+        tags: ["Bookings & Shifting"],
+        summary: "Get booking details by ID",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Booking details retrieved" } }
+      },
+      delete: {
+        tags: ["Bookings & Shifting"],
+        summary: "Cancel / delete booking",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Booking deleted" } }
+      }
+    },
+    "/api/v1/bookings/{id}/status": {
+      patch: {
+        tags: ["Bookings & Shifting"],
+        summary: "Update booking & escrow status",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["status"],
+                properties: {
+                  status: { type: "string", enum: ["PENDING", "ACCEPTED", "IN_TRANSIT", "COMPLETED", "CANCELLED"] }
+                }
+              }
+            }
+          }
+        },
+        responses: { "200": { description: "Booking status updated" } }
+      }
+    },
+    "/api/v1/payments": {
+      get: {
+        tags: ["Payments Gateway"],
+        summary: "List all payment transaction records (Admin)",
+        security: [{ bearerAuth: [] }],
+        responses: { "200": { description: "All payments retrieved" } }
       }
     },
     "/api/v1/payments/initiate": {
@@ -293,12 +468,47 @@ export const swaggerSpec = {
         responses: { "200": { description: "Payment verified successfully" } }
       }
     },
+    "/api/v1/payments/{id}": {
+      get: {
+        tags: ["Payments Gateway"],
+        summary: "Get payment transaction by ID",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Payment details retrieved" } }
+      }
+    },
+    "/api/v1/payments/{id}/refund": {
+      patch: {
+        tags: ["Payments Gateway"],
+        summary: "Mark payment transaction as refunded (Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Payment refunded" } }
+      }
+    },
     "/api/v1/admin/dashboard-stats": {
       get: {
         tags: ["Admin Operations"],
         summary: "Get system dashboard analytics & total revenue (Admin)",
         security: [{ bearerAuth: [] }],
         responses: { "200": { description: "Dashboard stats retrieved" } }
+      }
+    },
+    "/api/v1/admin/users": {
+      get: {
+        tags: ["Admin Operations"],
+        summary: "List all system users (Admin)",
+        security: [{ bearerAuth: [] }],
+        responses: { "200": { description: "Users list retrieved" } }
+      }
+    },
+    "/api/v1/admin/providers/{id}/verify": {
+      patch: {
+        tags: ["Admin Operations"],
+        summary: "Approve and verify provider account (Admin)",
+        security: [{ bearerAuth: [] }],
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "200": { description: "Provider verified" } }
       }
     },
     "/api/v1/admin/audit-logs": {

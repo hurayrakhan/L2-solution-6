@@ -78,7 +78,3 @@ Visit `http://localhost:8000/api-docs` to access the live Swagger API explorer.
 | **PROVIDER** | `owner@moveinbd.com` | `OwnerPass123!` |
 | **TENANT_USER** | `tenant@moveinbd.com` | `TenantPass123!` |
 
----
-
-## 📄 License
-ISC License
