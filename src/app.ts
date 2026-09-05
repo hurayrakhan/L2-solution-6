@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import { globalErrorHandler } from './middlewares/error.middleware.js';
-import { AppError } from './utils/app-error.js';
+import notFound from './middlewares/notFound.js';
 import routes from './routes/index.js';
 
 const app: Application = express();
@@ -48,12 +48,10 @@ app.get('/', (req: Request, res: Response) => {
 // Central Application Versioned Routes
 app.use('/api/v1', routes);
 
-// 404 Handler for Unmatched Routes
-app.all('*', (req: Request, res: Response, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-});
-
 // Global Error Handler Middleware
 app.use(globalErrorHandler);
+
+// 404 Not Found Middleware
+app.use(notFound);
 
 export default app;
