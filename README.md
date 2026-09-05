@@ -1,131 +1,214 @@
-# 🚀 B7A6 Backend Project Assignment
+# 🏠🚚 MoveInBD Backend — Housing, Logistics & Utility Splitting Platform
 
-> 💡 **Note:** This is a **backend-focused** assignment. You will build a robust, scalable, and secure RESTful API. No frontend UI is required; all functionality must be demonstrated via API testing tools like Postman or Thunder Client.
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-green.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue.svg)](https://www.typescriptlang.org/)
+[![Express](https://img.shields.io/badge/Express.js-4.19-lightgrey.svg)](https://expressjs.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-7.8-indigo.svg)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-NeonDB-blue.svg)](https://neon.tech/)
+[![License](https://img.shields.io/badge/License-ISC-brightgreen.svg)]()
 
----
-
-## 🔍 Find Your Assignment 
-
-> 💡 Check your Student ID by clicking your **profile image** on the [Programming Hero Website](https://web.programming-hero.com/profile).
-
-| Last Digit of Student ID | Assignment |
-|:------------------------:|:-----------|
-| **1** | **Courier & Logistics Platform** 🚚 |
-| **2** | **Blood Donation & Emergency Platform** 🩸 |
-| **3** | **Load Shedding & Power Management** ⚡ |
-| **4** | **Developer Assessment Platform** 💻 |
-| **5** | **Emergency Ambulance Dispatch** 🚑 |
-| **6** | **Housing & Roommate Platform** 🏠 |
-| **7** | **Field Service Management** 🔧 |
-| **8** | **Project Management SaaS** 📋 |
-| **9** | **University Management System** 🎓 |
-| **0** | **City Complaint & Service Platform** 🏙️ |
-
-> 📚 **Explore the full Idea Hub:** [Project Idea Hub](https://github.com/Apollo-Level2-Web-Dev/B7A6/blob/main/idea-hub.md)
-
-> 💡 **Note:** You may customize the selected project or choose a completely unique project outside this list. However, regular e-commerce clones or projects already covered in this course are **not allowed**. The core problem domain, the 3-role requirement, and the overall project complexity must strictly meet our expectations.
+**MoveInBD** is a production-grade, multi-role RESTful API server built for urban housing rentals, mess utility bill splitting, house-shifting logistics, and passenger travel transportation in Bangladesh.
 
 ---
 
-## ⚠️ Mandatory Requirements
+## 📌 Features & Architecture Highlights
 
-> [!CAUTION]
-> **MANDATORY - READ CAREFULLY**
-> 
-> The following requirements are **strictly mandatory**. Failure to complete any of these may result in significant mark deductions or **0 marks** for the affected section:
-> 
-> 1. **API Documentation**: Share a complete Postman Collection or Swagger/OpenAPI documentation covering all important endpoints.
-> 2. **Consistent API Responses**: All APIs must return a structured JSON response:
->    - **Success**: `{ "success": true, "message": "Operation successful", "data": {} }`
->    - **Error**: `{ "success": false, "message": "Something went wrong", "errors": [] }`
-> 3. **Commits**: Minimum **20 meaningful** backend commits with descriptive messages (e.g., `feat:`, `fix:`, `docs:`).
-> 4. **Input Validation**: Server-side validation (Zod/Joi) is required on all applicable endpoints with proper error messages.
-> 5. **Authentication & Authorization**: Implement authentication (Email/Password + GCP Social Login) and strict role-based authorization for **3 distinct roles**.
-> 6. **Admin Credentials**: Provide working demo admin email and password for evaluation.
-> 7. **Payment Integration**: Must integrate **bKash, Stripe, or SSLCommerz** for real payment processing. Simulated/fake payments are **NOT** accepted.
-> 8. **Database**: Use **PostgreSQL with Prisma**, implementing proper relationships, constraints, indexing, and transactions.
-> 9. **Deployment**: Provide a working live API URL (e.g., Vercel Serverless Functions or Render).
-> 10. **Video Explanation**: Submit a 5–10 minute API walkthrough video.
+- **Strict 3 Primary Roles (RBAC)**: Enforces role permissions across `TENANT_USER`, `PROVIDER` (Property Owners / Drivers), and `ADMIN`.
+- **Housing & Property Rentals**: Complete property listing CRUD with soft deletes (`deletedAt`), keyword search (`?q=`), filtering (city, type, rent range), sorting, and pagination.
+- **Logistics & Travel Fleet**: Management of moving vans, pickups, microbuses, and cars with real-time availability tracking.
+- **Mess Utility Bill Splitting**: Automatic calculation of monthly utility bills (electricity, gas, water, internet) split evenly across active mess tenants with payment tracking.
+- **Concurrency-Safe Escrow Bookings**: Housing lease applications and vehicle bookings handled atomically via Prisma `$transaction` with escrow holding state (`HELD`, `RELEASED`, `REFUNDED`).
+- **Multi-Gateway Payment Integration**: Real payment integration using **Stripe Checkout** & **SSLCommerz** with webhook verification, payment session creation, and callback handling.
+- **Admin Dashboard & System Audit Logs**: Comprehensive platform analytics, provider identity verification, and system activity audit logs.
+- **Interactive Documentation**: Embedded Swagger UI served live at `/api-docs`.
+- **Vercel Serverless Ready**: Native ESModule (`ESNext`) setup configured for seamless serverless deployment.
 
 ---
 
-## 📊 Marks Distribution
+## 🛠️ Tech Stack
 
-| # | Category | Weight | Details |
-|:-:|:---------|:------:|:--------|
-| 1 | API Design & Documentation | 15% | RESTful design, endpoint structure, Postman/Swagger docs |
-| 2 | Database Design & Schema | 15% | Prisma schema, relationships, constraints, migrations, seed data |
-| 3 | Authentication & Authorization | 15% | Auth (Email + GCP), 3 roles, JWT/session handling, protected routes |
-| 4 | Core Functionality & Business Logic | 20% | CRUD, workflows, status management, role-based operations |
-| 5 | Error Handling & Validation | 10% | Input validation, structured errors, 404 handling, edge cases |
-| 6 | Payment Integration | 10% | bKash/Stripe/SSLCommerz integration, payment flow, status tracking |
-| 7 | Performance & Code Quality | 5% | Indexing, Redis caching, modular architecture, clean code |
-| 8 | Deployment | 5% | Working production API, environment configuration, DB connection |
-| 9 | Commit History | 2% | 20 meaningful backend commits |
-| 10 | Video Explanation | 3% | 5–10 minute API walkthrough |
-| **Total** | | **100%** | |
+| Category | Technology | Purpose |
+|---|---|---|
+| **Runtime & Framework** | Node.js (v20+), TypeScript, Express.js | Core REST API server |
+| **Database & ORM** | PostgreSQL (Neon DB), Prisma ORM 7 | Relational database, multi-file schema models, transactions |
+| **Authentication** | JWT (JSON Web Tokens), bcryptjs | Secure password hashing & Bearer Token RBAC authorization |
+| **Validation** | Zod | Server-side request body and param validation |
+| **Security & Middleware** | Helmet, CORS, Express-Rate-Limit, Cookie-Parser | Security headers, rate limiting (100 req/15m), CORS management |
+| **Payment Gateways** | Stripe, SSLCommerz | Payment sessions, webhooks, callback handling |
+| **API Documentation** | Swagger UI (`swagger-ui-express`, `swagger-jsdoc`) | Interactive API explorer at `/api-docs` |
+| **Deployment** | Vercel Serverless Functions | Production API hosting |
 
 ---
 
-## 📋 Project Requirements
+## 🚀 Getting Started (Local Setup)
 
-> ⏱️ **Detailed Guidelines:** Please read the complete project requirements, tech stack, and API rules here:  
-> 👉 [Project Requirements & API Guidelines](https://github.com/Apollo-Level2-Web-Dev/B7A6/blob/main/project_requirements.md)
+### Prerequisites
+- **Node.js** (v20.0.0 or higher)
+- **npm** (v10.0.0 or higher)
+- **PostgreSQL Database** (e.g. [Neon PostgreSQL](https://neon.tech))
 
----
-
-## 📅 Timeline: 5-Day Work Breakdown
-
-> ⏱️ **Recommended Schedule:** Maintain steady progress to avoid last-minute stress and ensure a clean Git history.  
-> 👉 [View the 5-Day Work Breakdown](https://github.com/Apollo-Level2-Web-Dev/B7A6/blob/main/timeline-breakdown.md)
-
----
-
-## 🗓️ Submission Deadlines
-
-| Deadline | Maximum Marks |
-|:---------|:-------------:|
-| **September 07, 2026, 11:59 PM** | 60 Marks |
-| **September 08, 2026, 11:59 PM** | 50 Marks |
-| **September 09, 2026 – September 23, 2026, 11:59 PM** | 30 Marks |
-
----
-
-## 📦 What to Submit
-
-Please format your submission exactly like this example:
-
-```text
-Project Name    : Courier & Logistics Platform
-Backend Repo    : https://github.com/your-username/courier-backend
-Live API        : https://courier-api.vercel.app
-API Docs        : https://documenter.getpostman.com/view/xyz
-Demo Video      : https://drive.google.com/file/d/xyz/view
-Admin Email     : admin@courier.com
-Admin Password  : ********
+### 1. Clone & Install Dependencies
+```bash
+git clone https://github.com/hurayrakhan/L2-solution-6.git
+cd L2-solution-6
+npm install
 ```
 
-> ⚠️ **Security Warning:** Never submit personal passwords or production secrets. Create dedicated, secure demo credentials specifically for evaluation.
+### 2. Configure Environment Variables
+Create a `.env` file in the project root directory (refer to `.env.example`):
+
+```env
+NODE_ENV=development
+PORT=8000
+DATABASE_URL="postgresql://<user>:<password>@<host>/<database>?sslmode=require"
+
+# JWT Authentication
+JWT_SECRET=your_jwt_access_secret_key_minimum_256bit
+JWT_EXPIRES_IN=7d
+JWT_REFRESH_SECRET=your_jwt_refresh_secret_key_minimum_256bit
+JWT_REFRESH_EXPIRES_IN=30d
+
+# Payment Gateways
+STRIPE_SECRET_KEY=sk_test_51...
+SSLCOMMERZ_STORE_ID=sandbox_store_id
+SSLCOMMERZ_STORE_PASSWORD=sandbox_store_password
+SSLCOMMERZ_IS_LIVE=false
+
+# Client & Server URLs
+CLIENT_URL=http://localhost:3000
+SERVER_URL=http://localhost:8000
+```
+
+### 3. Database Migration & Prisma Client
+```bash
+# Generate Prisma Client
+npm run prisma:generate
+
+# Push schema to database
+npm run prisma:push
+```
+
+### 4. Run Development Server
+```bash
+npm run dev
+```
+The server will start at `http://localhost:8000`. You can visit `http://localhost:8000/api-docs` to view the interactive Swagger API documentation.
+
+### 5. Build & Run for Production
+```bash
+npm run build
+npm start
+```
 
 ---
 
-## 🎥 Video Explanation Guide
+## 🔑 Evaluation Demo Credentials
 
-**Duration:** 5–10 minutes  
-**Language:** English or Bengali  
-
-**What to Cover:**
-1. **Project Overview & Architecture**: Briefly explain the project name, the problem it solves, and your backend architecture (Routes → Controllers → Services → Prisma).
-2. **Demonstrate All 3 Roles**: Use **Postman / Thunder Client** to demonstrate actual API requests for all three roles. Show that a role *cannot* access endpoints belonging to another role (e.g., returning a `403 Forbidden`).
-3. **Demonstrate CRUD**: Show meaningful CRUD operations via API requests (POST, GET, PATCH/PUT, DELETE) with clear request bodies and responses.
-4. **Demonstrate Validation & Error Handling**: Intentionally trigger a validation error (e.g., invalid email format) and show the structured error response. Show a `404 Not Found` or `401 Unauthorized` example.
-5. **Demonstrate Payment Flow**: Walk through the payment API flow: Create Payment Session → Redirect/Response → Success/Cancel handling → Backend verification → Payment status update in the database.
-6. **Explain One Technical Challenge**: Briefly explain one meaningful problem you solved (e.g., Complex Prisma transactions, GCP Social Login integration, Redis caching strategy, or payment webhook handling).
-
-**Recording Options:**
-- **Loom**: Record and share the link directly.
-- **OBS**: Record and upload to Google Drive (ensure sharing is set to "Anyone with the link" → Viewer).
+| Role | Email | Password |
+|---|---|---|
+| **ADMIN** | `admin@moveinbd.com` | `AdminPass123!` |
+| **PROVIDER** | `owner@moveinbd.com` | `OwnerPass123!` |
+| **TENANT_USER** | `tenant@moveinbd.com` | `TenantPass123!` |
 
 ---
 
-> 🚀 **Final Goal:** Build a backend that is more than just a collection of endpoints. Your project should demonstrate a clear, logical path from **Problem → Requirements → Database Design → API Design → Auth → Business Logic → Validation → Payment → Testing → Deployment**. Build a rock-solid backend you can explain, defend, and be proud of!
+## 📋 REST API Endpoints Specification (28 APIs)
+
+All API responses follow a standardized JSON structure:
+- **Success**: `{ "success": true, "message": "...", "meta": {...}, "data": {...} }`
+- **Error**: `{ "success": false, "message": "...", "errors": [...] }`
+
+### 1. Authentication Module (`/api/v1/auth`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/auth/register` | Public | Register a new user (`TENANT_USER`, `PROVIDER`, `ADMIN`) |
+| `POST` | `/api/v1/auth/login` | Public | Login with email & password, returns JWT tokens |
+| `POST` | `/api/v1/auth/refresh-token` | Public | Generate a new access token using a refresh token |
+
+### 2. User & Profile Module (`/api/v1/users`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/users/me` | Authenticated | Retrieve profile details of the logged-in user |
+| `PATCH` | `/api/v1/users/me` | Authenticated | Update profile details (name, phone, avatar) |
+
+### 3. Property Management Module (`/api/v1/properties`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/properties` | `PROVIDER` | Add a new house, flat, or room listing |
+| `GET` | `/api/v1/properties` | Public | List properties with filter, sort & pagination (`?page=1&limit=10&city=Dhaka`) |
+| `GET` | `/api/v1/properties/search` | Public | Search properties by keyword query (`?q=Dhanmondi`) |
+| `GET` | `/api/v1/properties/:id` | Public | Retrieve detailed property information by ID |
+| `PATCH` | `/api/v1/properties/:id` | `PROVIDER` | Update property details |
+| `DELETE` | `/api/v1/properties/:id` | `PROVIDER` | Soft delete property listing (`deletedAt`) |
+
+### 4. Mess Utility Splitting Module (`/api/v1/utilities`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/utilities` | `PROVIDER` | Create monthly utility bill & split shares among tenants |
+| `GET` | `/api/v1/utilities` | `TENANT_USER` | List tenant's monthly utility bills and share breakdown |
+| `PATCH` | `/api/v1/utilities/:id/pay` | `TENANT_USER` | Mark utility share bill as paid |
+
+### 5. Logistics & Fleet Vehicle Module (`/api/v1/vehicles`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/vehicles` | `PROVIDER` | Add vehicle (Pickup, Van, Microbus) to logistics fleet |
+| `GET` | `/api/v1/vehicles` | Public | List all available logistics & transport vehicles |
+| `DELETE` | `/api/v1/vehicles/:id` | `PROVIDER` | Soft delete vehicle record |
+
+### 6. Concurrency-Safe Booking Module (`/api/v1/bookings`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/bookings` | `TENANT_USER` | Create property rental or vehicle booking (uses `$transaction`) |
+| `GET` | `/api/v1/bookings/my-bookings` | Authenticated | View logged-in user's booking history |
+| `PATCH` | `/api/v1/bookings/:id/status` | `PROVIDER` / `ADMIN` | Update booking status & escrow state (`CONFIRMED`, `COMPLETED`, `CANCELLED`) |
+
+### 7. Multi-Gateway Payment Module (`/api/v1/payments`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/api/v1/payments/stripe/create-checkout-session` | `TENANT_USER` | Create a Stripe Checkout Payment Session |
+| `POST` | `/api/v1/payments/stripe/webhook` | Public | Handle Stripe payment event webhooks |
+| `POST` | `/api/v1/payments/sslcommerz/initiate` | `TENANT_USER` | Initiate SSLCommerz payment session (bKash/Cards) |
+| `POST` | `/api/v1/payments/sslcommerz/success` | Public | SSLCommerz payment success callback |
+
+### 8. System Administration Module (`/api/v1/admin`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/api/v1/admin/dashboard-stats` | `ADMIN` | Retrieve platform-wide analytics & revenue summary |
+| `GET` | `/api/v1/admin/users` | `ADMIN` | List all registered system users |
+| `PATCH` | `/api/v1/admin/users/:id/verify-provider` | `ADMIN` | Approve and verify service provider accounts |
+| `GET` | `/api/v1/admin/audit-logs` | `ADMIN` | Inspect system activity audit logs |
+
+---
+
+## 🗄️ Database Architecture (Prisma Multi-File Models)
+
+```
+prisma/
+├── prisma.config.ts        # Prisma 7 configuration file
+└── models/
+    ├── schema.prisma       # Datasource & generator config
+    ├── enums.prisma        # System Enums (Role, BookingStatus, PaymentStatus, etc.)
+    ├── user.prisma         # User & Provider Profile models
+    ├── property.prisma     # Property listing & photos
+    ├── utility.prisma      # Utility Bills & Tenant shares
+    ├── vehicle.prisma      # Fleet vehicles
+    ├── booking.prisma      # House-shifting & rental bookings
+    ├── payment.prisma      # Payment transactions
+    └── auditLog.prisma     # System activity logs
+```
+
+---
+
+## 🚀 Deployment (Vercel Serverless)
+
+The project includes pre-configured serverless handlers for Vercel deployment:
+
+- **Entry Point**: `api/index.ts`
+- **Config**: `vercel.json`
+- **Build Command**: `npm run build` (`prisma generate && tsc`)
+
+---
+
+## 📝 License
+
+This project is licensed under the **ISC License**.
