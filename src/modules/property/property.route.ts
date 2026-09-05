@@ -14,8 +14,9 @@ router.post(
 );
 
 router.get('/', PropertyController.getAllProperties);
-
+router.get('/search', PropertyController.searchProperties);
 router.get('/:id', PropertyController.getPropertyById);
+
 
 router.patch(
   '/:id',
