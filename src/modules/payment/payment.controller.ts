@@ -60,11 +60,37 @@ const refundPayment = catchAsync(async (req: CustomRequest, res: Response) => {
   });
 });
 
+const createStripeCheckoutSession = catchAsync(async (req: CustomRequest, res: Response) => {
+  const userId = req.user!.id;
+  const result = await PaymentService.createStripeCheckoutSessionInDB(userId, req.body);
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: 'Stripe checkout session created successfully',
+    data: result,
+  });
+});
+
+const handleStripeWebhook = catchAsync(async (req: Request, res: Response) => {
+  const signature = req.headers['stripe-signature'] as string;
+  const rawBody = (req as any).rawBody || req.body;
+  const result = await PaymentService.handleStripeWebhookInDB(rawBody, signature);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Stripe webhook event processed successfully',
+    data: result,
+  });
+});
+
 export const PaymentController = {
+  createStripeCheckoutSession,
+  handleStripeWebhook,
   initiatePayment,
   verifyPaymentWebhook,
   getAllPayments,
   getPaymentById,
   refundPayment,
 };
+
 

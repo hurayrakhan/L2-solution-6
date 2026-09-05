@@ -16,7 +16,9 @@ export default {
   },
   stripe: {
     secret_key: process.env.STRIPE_SECRET_KEY,
+    webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
   },
+
   bkash: {
     app_key: process.env.BKASH_APP_KEY,
     app_secret: process.env.BKASH_APP_SECRET,

@@ -34,8 +34,14 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
-// Parser Middlewares
-app.use(express.json());
+app.use(
+  express.json({
+    verify: (req: any, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 

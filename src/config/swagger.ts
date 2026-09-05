@@ -453,6 +453,40 @@ export const swaggerSpec = {
         responses: { "200": { description: "All payments retrieved" } }
       }
     },
+    "/api/v1/payments/stripe/create-checkout-session": {
+      post: {
+        tags: ["Payments Gateway"],
+        summary: "Create a real Stripe Checkout payment session",
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                required: ["amount", "paymentType", "referenceId"],
+                properties: {
+                  amount: { type: "number", example: 3500 },
+                  paymentType: { type: "string", enum: ["RENT", "UTILITY", "TRANSPORT_BOOKING"], example: "TRANSPORT_BOOKING" },
+                  referenceId: { type: "string", example: "booking_id_uuid" },
+                  successUrl: { type: "string", example: "http://localhost:3000/success" },
+                  cancelUrl: { type: "string", example: "http://localhost:3000/cancel" }
+                }
+              }
+            }
+          }
+        },
+        responses: { "201": { description: "Stripe checkout session created successfully" } }
+      }
+    },
+    "/api/v1/payments/stripe/webhook": {
+      post: {
+        tags: ["Payments Gateway"],
+        summary: "Stripe webhook endpoint for signature-verified event notifications",
+        description: "Processes checkout.session.completed and payment_intent.succeeded events signed with stripe-signature",
+        responses: { "200": { description: "Stripe webhook event processed successfully" } }
+      }
+    },
     "/api/v1/payments/initiate": {
       post: {
         tags: ["Payments Gateway"],
@@ -468,6 +502,7 @@ export const swaggerSpec = {
         responses: { "200": { description: "Payment verified successfully" } }
       }
     },
+
     "/api/v1/payments/{id}": {
       get: {
         tags: ["Payments Gateway"],

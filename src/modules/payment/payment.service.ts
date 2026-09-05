@@ -1,5 +1,119 @@
+import Stripe from 'stripe';
+import config from '../../config/index.js';
 import { AppError } from '../../utils/app-error.js';
 import { prisma } from '../../utils/prisma.js';
+
+const stripe = new Stripe(config.stripe.secret_key || 'sk_test_placeholder', {
+  apiVersion: '2024-06-20' as any,
+});
+
+const createStripeCheckoutSessionInDB = async (userId: string, payload: any) => {
+  const { amount, paymentType, referenceId, successUrl, cancelUrl } = payload;
+
+  const transactionId = `TXN_STRIPE_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
+
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [
+      {
+        price_data: {
+          currency: 'bdt',
+          product_data: {
+            name: `MoveInBD ${paymentType}`,
+            description: `Payment reference: ${referenceId}`,
+          },
+          unit_amount: Math.round(amount * 100),
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: successUrl || `http://localhost:8000/api/v1/payments/stripe/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: cancelUrl || `http://localhost:8000/api/v1/payments/stripe/cancel`,
+    client_reference_id: referenceId,
+    metadata: {
+      userId,
+      paymentType,
+      referenceId,
+      transactionId,
+    },
+  });
+
+  const payment = await prisma.payment.create({
+    data: {
+      userId,
+      amount,
+      paymentType,
+      referenceId,
+      gateway: 'STRIPE',
+      transactionId: session.id || transactionId,
+      status: 'INITIATED',
+    },
+  });
+
+  return {
+    payment,
+    checkoutUrl: session.url,
+    sessionId: session.id,
+  };
+};
+
+const handleStripeWebhookInDB = async (rawBody: Buffer | string, signature: string) => {
+  const webhookSecret = config.stripe.webhook_secret;
+  let event: Stripe.Event;
+
+  if (webhookSecret && signature) {
+    try {
+      event = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret);
+    } catch (err: any) {
+      throw new AppError(`Stripe Webhook Signature Verification Failed: ${err.message}`, 400);
+    }
+  } else {
+    event = typeof rawBody === 'string' ? JSON.parse(rawBody) : JSON.parse(rawBody.toString('utf8'));
+  }
+
+  const session = event.data.object as Stripe.Checkout.Session;
+  const transactionId = session.id;
+
+  if (event.type === 'checkout.session.completed' || event.type === 'payment_intent.succeeded') {
+    return await prisma.$transaction(async (tx) => {
+      const payment = await tx.payment.findFirst({
+        where: { OR: [{ transactionId }, { referenceId: session.client_reference_id || '' }] },
+      });
+
+      if (payment) {
+        await tx.payment.update({
+          where: { id: payment.id },
+          data: { status: 'SUCCESS' },
+        });
+
+        if (payment.paymentType === 'TRANSPORT_BOOKING') {
+          await tx.transportBooking.update({
+            where: { id: payment.referenceId },
+            data: { escrowStatus: 'HELD', status: 'ACCEPTED' },
+          });
+        } else if (payment.paymentType === 'UTILITY') {
+          await tx.utilityPayment.updateMany({
+            where: { utilityBillId: payment.referenceId, tenantId: payment.userId },
+            data: { paymentStatus: 'SUCCESS', transactionId, paidAt: new Date() },
+          });
+        }
+
+        await tx.auditLog.create({
+          data: {
+            userId: payment.userId,
+            action: 'STRIPE_WEBHOOK_PAYMENT_SUCCESS',
+            entity: 'Payment',
+            entityId: payment.id,
+            details: `Stripe Checkout payment verified for session ${session.id}`,
+          },
+        });
+      }
+    });
+  }
+
+  return { received: true };
+};
 
 const initiatePaymentInDB = async (userId: string, payload: any) => {
   const { amount, paymentType, referenceId, gateway = 'STRIPE' } = payload;
@@ -19,12 +133,6 @@ const initiatePaymentInDB = async (userId: string, payload: any) => {
   });
 
   let paymentUrl = '';
-
-  /* bKash Payment Integration (Commented out for now - using Stripe & SSLCommerz)
-  if (gateway === 'BKASH') {
-    paymentUrl = `https://sandbox.bkash.com/checkout?trxID=${transactionId}&amount=${amount}`;
-  } else
-  */
 
   if (gateway === 'STRIPE') {
     paymentUrl = `https://checkout.stripe.com/pay/${transactionId}`;
@@ -123,7 +231,6 @@ const refundPaymentInDB = async (id: string, adminId: string) => {
       data: { status: 'CANCELLED' },
     });
 
-
     await tx.auditLog.create({
       data: {
         userId: adminId,
@@ -139,10 +246,13 @@ const refundPaymentInDB = async (id: string, adminId: string) => {
 };
 
 export const PaymentService = {
+  createStripeCheckoutSessionInDB,
+  handleStripeWebhookInDB,
   initiatePaymentInDB,
   verifyPaymentWebhookInDB,
   getAllPaymentsFromDB,
   getPaymentByIdFromDB,
   refundPaymentInDB,
 };
+
 
