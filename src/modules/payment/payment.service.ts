@@ -2,7 +2,7 @@ import { AppError } from '../../utils/app-error.js';
 import { prisma } from '../../utils/prisma.js';
 
 const initiatePaymentInDB = async (userId: string, payload: any) => {
-  const { amount, paymentType, referenceId, gateway } = payload;
+  const { amount, paymentType, referenceId, gateway = 'STRIPE' } = payload;
 
   const transactionId = `TXN_${gateway}_${Date.now()}_${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -19,9 +19,14 @@ const initiatePaymentInDB = async (userId: string, payload: any) => {
   });
 
   let paymentUrl = '';
+
+  /* bKash Payment Integration (Commented out for now - using Stripe)
   if (gateway === 'BKASH') {
     paymentUrl = `https://sandbox.bkash.com/checkout?trxID=${transactionId}&amount=${amount}`;
-  } else if (gateway === 'STRIPE') {
+  } else
+  */
+
+  if (gateway === 'STRIPE') {
     paymentUrl = `https://checkout.stripe.com/pay/${transactionId}`;
   } else {
     paymentUrl = `https://sandbox.sslcommerz.com/gwprocess/v4/api.php?Q=${transactionId}`;

@@ -6,7 +6,7 @@ export const PaymentValidation = {
       amount: z.number().positive(),
       paymentType: z.enum(['RENT', 'UTILITY', 'TRANSPORT_BOOKING']),
       referenceId: z.string().min(1, 'Reference ID is required'),
-      gateway: z.enum(['BKASH', 'STRIPE', 'SSLCOMMERZ']).default('BKASH'),
+      gateway: z.enum(['STRIPE', 'SSLCOMMERZ' /* 'BKASH' commented out for now */]).default('STRIPE'),
     }),
   }),
   verifyWebhookSchema: z.object({
